@@ -965,6 +965,9 @@ SECTIONS {
         src/eeprom.o(.text);
         *libc.a:memcpy.o(.text);
 
+        src/mgz/menu.o(.text);
+        src/mgz/menu.o(.rodata);
+
         /* handwritten assembly in arm mode */
         asm/intr.o(.text);
         /* data */
