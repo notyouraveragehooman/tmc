@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "utils.h"
 #include "npc.h"
+#include "mgz/hooks.h"
 
 extern u8 gUnk_03003DE0;
 extern u8 gUnk_03000C30;
@@ -114,6 +115,11 @@ void PrepNextFrame(void) {
     sub_0801C25C();
     UpdateDisplayControls();
     LoadResources();
+
+#ifdef NO_MGZ
+#else
+    MGZ();
+#endif
 
     if (gUnk_02000070) {
         gUnk_02000070 = 0;

@@ -112,6 +112,7 @@ SECTIONS {
         . = 0x0002CEB4; gMetatilesBottom = .;
         . = 0x00030EB4; gUnk_02030EB4 = .;
         . = 0x00031EC0; gUnk_02031EC0 = .;
+        . = 0x00032800; gMGZ = .;
         . = 0x00032EC0; gUnk_02032EC0 = .;
         . = 0x00032EDC; gUnk_02032EDC = .;
         . = 0x00032F14; gUnk_02032F14 = .;
@@ -970,8 +971,10 @@ SECTIONS {
         src/eeprom.o(.text);
         *libc.a:memcpy.o(.text);
 
-        src/mgz/menu.o(.text);
-        src/mgz/menu.o(.rodata);
+        src/mgz/main.o(.text);
+        src/mgz/main.o(.rodata);
+        src/mgz/ut.o(.text);
+        src/mgz/ut.o(.rodata);
 
         /* handwritten assembly in arm mode */
         asm/intr.o(.text);

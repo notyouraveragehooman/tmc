@@ -10,12 +10,7 @@
 extern void (*const gUnk_08109A30[])();
 
 void HandleDebugTextScreen() {
-#ifdef NO_MGZ
     gUnk_08109A30[gMain.funcIndex]();
-#else
-    #include "mgz/hooks.h"
-    MGZMenu();
-#endif
 }
 
 void sub_0805FA04(void) {
