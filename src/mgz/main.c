@@ -64,8 +64,8 @@ static void MGZ_SetItem(Mgz*);
 static void MGZ_Warp(Mgz* mgz);
 static void MGZ_Update(Mgz* mgz) {
     static void (*const MGZModes[])(Mgz*) = {
-        [SELECT] = MGZ_Select,    [QUICK_MENU] = MGZ_QuickMenu, [SPAWN_ENT] = MGZ_SpawnEnt,
-        [SET_ITEM] = MGZ_SetItem, [WARP] = MGZ_Warp,
+        [SELECT] = MGZ_Select, [QUICK_MENU] = MGZ_QuickMenu, [SPAWN_ENT] = MGZ_SpawnEnt, [SET_ITEM] = MGZ_SetItem,
+        [WARP] = MGZ_Warp,
     };
 
     MGZModes[mgz->mode](mgz);
@@ -167,12 +167,14 @@ static void MGZ_QuickMenu_Init(Mgz* mgz) {
 
     enum {
         FULL_SAVE,
+        FIREROD,
         CLEAR_ENTITIES,
         RESET_ROOM,
         NUM_ENTRIES,
     };
     const char nameTbl[][16] = {
         "100%",
+        "FIREROD ON A",
         "CLEAR ENTITIES",
         "RESET ROOM",
     };
@@ -211,7 +213,7 @@ static void MGZ_QuickMenu_Init(Mgz* mgz) {
                         gSave.fillerD0[0x22 + i] = 0x55;
                     }
                 }
-                
+
                 // visit flags
                 for (i = 0; i < 0x44; ++i) {
                     gSave.field_0x9[0x17 + i] = 0xFF;
@@ -229,26 +231,26 @@ static void MGZ_QuickMenu_Init(Mgz* mgz) {
                         gSave.fillerD0[0x171 + i] = 0xFF;
                     }
                 }
-
                 break;
-            case CLEAR_ENTITIES:
-                {
-                    Entity* ent;
-                    Entity* next;
-                    LinkedList* it;
+            case FIREROD:
+                gSave.stats.itemOnA = 0x16;
+                break;
+            case CLEAR_ENTITIES: {
+                Entity* ent;
+                Entity* next;
+                LinkedList* it;
 
-                    it = &gEntityLists[2];
-                    if (it->first) {
-                        do {
-                            for (ent = it->first; (u32)ent != (u32)it; ent = next) {
-                                next = ent->next;
-                                DeleteEntityAny(ent);
-                            }
-                        } while (++it < &gEntityLists[9]);
-                        ClearAllDeletedEntities();
-                    }
+                it = &gEntityLists[2];
+                if (it->first) {
+                    do {
+                        for (ent = it->first; (u32)ent != (u32)it; ent = next) {
+                            next = ent->next;
+                            DeleteEntityAny(ent);
+                        }
+                    } while (++it < &gEntityLists[9]);
+                    ClearAllDeletedEntities();
                 }
-                break;
+            } break;
             case RESET_ROOM:
                 gScreenTransition.transitioningOut = TRUE;
                 break;
@@ -284,7 +286,6 @@ static void MGZ_QuickMenu_Exit(Mgz* mgz) {
     mgz->mode = SELECT;
     MGZ_Reset(mgz);
 }
-
 
 /*
     Mode Set Item
@@ -343,7 +344,7 @@ static void MGZ_SetItem_Init(Mgz* mgz) {
 #define CONFIG_ITEM(type, addr, bit)                     \
     case type:                                           \
         has_item = !!(addr & (1 << bit));                \
-        if (mgz->opt_y != type || !mgz->opt_x)        \
+        if (mgz->opt_y != type || !mgz->opt_x)           \
             break;                                       \
         has_item = !has_item;                            \
         addr = (addr & ~(1 << bit)) | (has_item << bit); \
@@ -509,7 +510,6 @@ static void MGZ_Warp_Exit(Mgz* mgz) {
     MGZ_Reset(mgz);
 }
 
-
 /*
     Mode Spawn Entity
 */
@@ -534,8 +534,8 @@ static void MGZ_SpawnEnt_Init(Mgz* mgz) {
 
     if (mgz->opt_x < 0)
         mgz->opt_x = 0;
-    else if (mgz->opt_x > 1)
-        mgz->opt_x = 1;
+    else if (mgz->opt_x > 2)
+        mgz->opt_x = 2;
 
     switch (mgz->opt_x) {
         case 0:
